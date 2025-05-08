@@ -1,15 +1,13 @@
-# Imagem oficial do PHP com Apache
-FROM php:8.2-apache
+# Use a imagem oficial do PHP como base
+FROM php:8.1-apache
 
-# Ativa módulos necessários
-RUN docker-php-ext-install pdo pdo_sqlite
+# Instalar dependências necessárias
+RUN apt-get update && apt-get install -y \
+    libsqlite3-dev \
+    && docker-php-ext-install pdo pdo_sqlite
 
-# Copia os arquivos do projeto para a pasta do Apache
-COPY . /var/www/html/
+# Copiar o banco de dados para o contêiner
+COPY ./usuarios.db /var/www/html/usuarios.db
 
-# Dá permissão aos arquivos
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
-
-# Exponha a porta padrão do Apache
+# Expõe a porta 80, que é a porta padrão para o Apache
 EXPOSE 80
