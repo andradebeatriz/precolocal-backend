@@ -1,16 +1,15 @@
-FROM php:8.2-cli
+# Imagem oficial do PHP com Apache
+FROM php:8.2-apache
 
-# Instala extensões necessárias
-RUN apt-get update && \
-    apt-get install -y sqlite3 libsqlite3-dev && \
-    docker-php-ext-install pdo pdo_sqlite
+# Ativa módulos necessários
+RUN docker-php-ext-install pdo pdo_sqlite
 
-# Copia o projeto para o container
-COPY . /usr/src/myapp
-WORKDIR /usr/src/myapp
+# Copia os arquivos do projeto para a pasta do Apache
+COPY . /var/www/html/
 
-# Abre a porta 80
+# Dá permissão aos arquivos
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
+
+# Exponha a porta padrão do Apache
 EXPOSE 80
-
-# Inicia servidor PHP embutido
-CMD ["php", "-S", "0.0.0.0:80"]
